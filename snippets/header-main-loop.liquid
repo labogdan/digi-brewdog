@@ -1,0 +1,30 @@
+<ul class="header__links">
+	{% for link in linklists.mega-menu.links %}
+	<li class="header__links__link odd" data-id="brewdog-menu-77247" tabindex="0">
+		<a class="link menu__link" data-menu="{{ link.title }}" href="{{ link.url }}">{{ link.title }}</a>
+		{% if link.links != blank %}
+		<div class="header__menu z-10 transition-02 transition-delay-01" id="{{ link.title }}" tabindex="0">
+			<div class="header__menu__image">
+				<img alt="shield" src="https://www.brewdog.com/static/version1590609673/frontend/Born/arcticFox/en_US/images/shield.png">
+			</div>
+			{% for child_link in link.links %}
+				<div class="header__menu__collection" tabindex="0">
+					<div class="header__menu__header" tabindex="0">
+						<a class="link menu__inner-link" data-menu="{{ child_link.title }}" href="{{  child_link.url }}"  tabindex="0">{{ child_link.title }}</a>
+					</div>
+					{% if child_link.links != blank %}
+						{% for grandchild_link in child_link.links %} 
+						<div class="header__menu__item" tabindex="0">
+							<a class="link menu__inner-link" data-menu="menu-77253" href="{{ grandchild_link.url }}"  tabindex="0">{{ grandchild_link.title }}</a>
+						</div>
+						{% endfor %}
+					{% endif %}
+				</div>
+			{% endfor %}
+		</div>
+		{% endif %}
+	</li>
+	{% endfor %}
+</ul>
+
+<!-- /BLOCK main.menu -->

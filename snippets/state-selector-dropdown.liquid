@@ -1,0 +1,22 @@
+<!-- Begin State Selector Dropdown -->
+<select id="{{ customId }}" class="state-selector {{ customClass }}">
+  <option value="" disabled selected>
+    {% if defaultOption %}{{ defaultOption }}{% else %}Change state{% endif %}
+  </option>
+</select>
+
+<script>
+  $(document).ready(function() {
+    $(".state-selector").each(function(index) {
+      var selector = $(this)
+      var child = selector.children().length;
+      if (child <= 1) {
+        for (var key in USA_STATES) {
+          var state = USA_STATES[key];
+          selector.append(`<option value="${key}">${state}</option>`);
+        }
+      }
+    });
+  });
+</script>
+<!-- End State Selector Dropdown -->

@@ -1,0 +1,145 @@
+<div id="NavDrawer" class="drawer fixed-overlay drawer--left">
+  <div class="fixed-overlay--content">
+    <div id="mobileHeader" class="drawer__header">
+      <div class="drawer__close">
+			<div class="header-control js-drawer-open-NavDrawer menu-toggle" style="">
+		      <a class="icon-fallback-text site-nav__link table--cell-center " aria-controls="NavDrawer" aria-expanded="false" tabindex="0" href="javascript:void(0);">
+		        <span class="icon hamburger-svg" tabindex="-1">
+		          <svg><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-burger"></use></svg>
+		          <svg class="icon-close"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-close"></use></svg>
+		        </span>
+		        <span class="fallback-text" tabindex="-1">Menu</span>
+		      </a>
+		    </div>
+		    
+		    <div class="mobileBasket">
+		      
+		      <div class="miniBasket">
+		          {% if shop.customer_accounts_enabled and section.settings.navigation_style == 'links' %}
+		            <div class="grid__item account full-height large--one-third medium--one-sixth push--medium--thirteen-fiftieths small--one-third header-control js-account-icon">
+		              {% if customer %}
+		              <a class="icon-fallback-text site-nav__link table--cell-center " aria-controls="Account" aria-expanded="false" tabindex="0"  href="/account">
+		                <span class="icon account-svg" tabindex="-1">
+		                  <i class="fa fa-user"></i>
+		                </span>
+		                <span class="fallback-text" tabindex="-1">{{ 'layout.navigation.account' | t }}</span>
+		              </a>
+					  {% else %}
+		              <a class="icon-fallback-text site-nav__link table--cell-center " aria-controls="Account" aria-expanded="false" tabindex="0"  href="/account">
+		                <span class="icon account-svg" tabindex="-1">
+		                  <i class="fa fa-user"></i>
+		                  <svg class="icon-close"><use xlink:href="#icon-close"></use></svg>
+		                </span>
+		                <span class="fallback-text" tabindex="-1">{{ 'layout.navigation.account' | t }}</span>
+		              </a>
+					  {% endif %}
+		            </div>
+		          {% endif %}
+					<div class="grid__item cart full-height large--one-third medium--one-sixth push--medium--thirteen-fiftieths small--one-third header-control  js-drawer-open-CartDrawer">
+					<a href="/cart" class="icon-fallback-text site-nav__link table--cell-center" aria-controls="CartDrawer" aria-expanded="false" tabindex="0" >
+					  {% comment %}<span class="icon cart-svg">{{ 'cart.svg' | asset_url | img_tag }}</span>{% endcomment %}
+					  <span class="icon cart-svg" tabindex="-1">
+					    <i class="fa fa-shopping-cart"></i>
+					    <svg class="icon-close"><use xlink:href="#icon-close"></use></svg>
+					    <!--<span class="items cartCount">{{ cart.item_count }}</span>-->
+					  </span>
+					  <span tabindex="-1" class="fallback-text">{{ 'layout.navigation.cart' | t }}</span>
+					  
+					</a>
+					</div>
+		      </div>
+		    </div>
+		
+		    <a href="/" class="logo">
+		      <img src="{{'brewdog-logo.png' | asset_url }}" alt="BrewDog">
+		    </a>
+      </div>
+    </div>
+
+    <!-- begin mobile-nav -->
+    <ul class="mobile-nav tk-league-gothic">
+      {% assign usePlaceholderNavbar = true %}
+
+      {% assign mainMenu = section.settings.nav_linklist %}
+      {% if linklists[mainMenu].links.size != 0 %}
+        {% assign usePlaceholderNavbar = false %}
+        <div class="mobile-nav__header">{{ linklists[mainMenu].title }}</div>
+        <ul class="mobile-nav">
+          {% for link in linklists[mainMenu].links %}
+            {% assign child_list_handle = link.title | handleize %}
+            {% include "drawer-nav-menu" with handle: child_list_handle %}
+            {% if forloop.last %}
+              {% if linklists[section.settings.nav_linklist_2].links.size != 0 or linklists[section.settings.nav_linklist_2].links.size == 0 and linklists[section.settings.nav_linklist_3].links.size != 0  %}
+              <hr class='medium-down--show large--hide'>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      {% if linklists[section.settings.nav_linklist_2].links.size != 0 %}
+        {% assign usePlaceholderNavbar = false %}
+        <div class="mobile-nav__header">{{ linklists[section.settings.nav_linklist_2].title }}</div>
+        <ul class="mobile-nav">
+          {% for link in linklists[section.settings.nav_linklist_2].links %}
+            {% assign child_list_handle = link.title | handleize %}
+            {% include "drawer-nav-menu" with handle: child_list_handle %}
+            {% if forloop.last and linklists[section.settings.nav_linklist_3].links.size != 0  %}<hr class='medium-down--show large--hide'>{% endif %}
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      {% if linklists[section.settings.nav_linklist_3].links.size != 0 %}
+        {% assign usePlaceholderNavbar = false %}
+        <div class="mobile-nav__header">{{ linklists[section.settings.nav_linklist_3].title }}</div>
+        <ul class="mobile-nav">
+          {% for link in linklists[section.settings.nav_linklist_3].links %}
+            {% assign child_list_handle = link.title | handleize %}
+            {% include "drawer-nav-menu" with handle: child_list_handle %}
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      {% if shop.customer_accounts_enabled %}
+        {% assign usePlaceholderNavbar = false %}
+        <li class="mobile-nav__item account-section">
+          <div class="mobile-nav__header">{{'customer.account.title' | t }}</div>
+          <ul class="mobile-nav">
+            {% if customer %}
+              <li class="mobile-nav__item">
+                {% if customer.first_name != blank %}
+                  {% capture first_name %}{{ customer.first_name }}{% endcapture %}
+                  <a href="/account">{{ 'layout.customer.logged_in_as_html' | t: first_name: first_name }}</a>
+                {% else %}
+                  <a href="/account">{{ 'layout.customer.account' | t }}</a>
+                {% endif %}
+              </li>
+              <li class="mobile-nav__item">
+                {{ 'layout.customer.log_out' | t | customer_logout_link }}
+              </li>
+            {% else %}
+              <li class="mobile-nav__item">
+                {{ 'layout.customer.log_in' | t | customer_login_link }}
+              </li>
+              {% if shop.customer_accounts_enabled %}
+                <li class="mobile-nav__item">
+                  {{ 'layout.customer.create_account' | t | customer_register_link }}
+                </li>
+              {% endif %}
+            {% endif %}
+          </ul>
+        </li>
+      {% endif %}
+
+      {% if usePlaceholderNavbar %}
+        {{ 'theme-onboarding.css' | global_asset_url | stylesheet_tag }}
+        <p class='nav-placeholder'>
+          <strong>{{'homepage.onboarding.navbar_bold' | t }}</strong>
+          <br>{{'homepage.onboarding.navbar' | t }}
+        </p>
+      {% endif %}
+
+    </ul>
+  </div>
+  <!-- //mobile-nav -->
+</div>

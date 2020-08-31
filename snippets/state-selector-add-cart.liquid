@@ -1,0 +1,20 @@
+<!-- Begin State Selector Cart Button -->
+<script>
+  function isProductAllowedToAddToCart(){
+    var result = true
+    var tags = {{ product.tags | json }}
+    var userState = getUserState(); // state-selector-scripts.liquid
+    if (userState){
+      result =  isProductAvailableInState(userState, tags)
+    }
+    return result
+  }
+
+  $(window).on("load", function() {
+    var isProductAllowed = isProductAllowedToAddToCart()
+    if(!isProductAllowed){
+      $('#AddToCart').attr('disabled', 'disabled')
+    }
+  })
+</script>
+<!-- End State Selector Cart Button -->

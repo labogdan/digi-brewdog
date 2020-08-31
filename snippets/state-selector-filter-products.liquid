@@ -1,0 +1,71 @@
+<!-- Begin State Selector Filter -->
+<script>
+  function updateUserStateUI() {
+    updateHeaderStateSelectorUI(); // state-selector-header.liquid
+    updateHeaderBannerState(); // state-selector-banner.liquid
+    filterByUserState();
+  }
+
+  function evalHTMLElement(states, userState, element) {
+    if (states) {
+      var isAllowedProduct = states.includes(userState);
+      return isAllowedProduct ? element.show() : element.hide();
+    }
+  }
+
+  // Hide/Show NavItems based on the user's state and product's tags.
+  function filterNavItems(userState) {
+    var isFullRestricted = isBeerFullRestricted();
+    $(".filter-nav-item").each(function() {
+      var element = $(this);
+      var beerType = element.data("product") || "";
+      var cleanString = beerType.toLowerCase().trim();
+
+      if (isFullRestricted && cleanString === "beer") {
+        element.hide();
+      } else {
+        var allowedStates = getAllowedStateLowerCase(); // state-selector-scripts.liquid
+        var states = allowedStates[cleanString];
+        evalHTMLElement(states, userState, element);
+      }
+    });
+  }
+
+  // Hide/Show Products based on the user's state and product's tags.
+  function filterProducts(userState) {
+    $(".state-selector-product").each(function() {
+      var element = $(this);
+      var tags = element.data("product-tags").split(",") || [];
+      var isAllowedProduct = isProductAvailableInState(userState, tags); // state-selector-scripts.liquid
+      if (isAllowedProduct) {
+        element.show();
+      } else {
+        element.hide();
+      }
+    });
+  }
+
+  // Main Filtering Function
+  function filterByUserState() {
+    var userState = getUserState(); // state-selector-scripts.liquid
+    if (userState) {
+      filterNavItems(userState);
+      filterProducts(userState);
+    }
+    $(".grid--products").css("opacity", 1);
+  }
+
+  var debounceFiltering = debounce(function() {
+    filterByUserState();
+  }, 250);
+
+  $(document).ready(function() {
+    $(document).on("DOMSubtreeModified", "body", debounceFiltering);
+  });
+</script>
+<style>
+  .grid--products {
+    opacity: 0;
+  }
+</style>
+<!-- End State Selector Filter -->

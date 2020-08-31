@@ -1,0 +1,75 @@
+
+
+
+
+<div class="header-mobile">
+		<ul class="header-mobile__actions">
+			<li class="header-mobile__actions__action">
+				<span class="nav-toggle"><span class="bars" id="bar1"></span> <span class="bars" id="bar2"></span> <span class="bars" id="bar3"></span></span>
+				<div class="header-mobile__actions__action__label js-mobile-menu-label">
+					Menu
+				</div>
+			</li>
+			<li class="header-mobile__actions__action even" id="search-button-mobile">
+			    <div>
+				    <a class="link" href="/search"><img class="icon " src="https://www.brewdog.com/static/version1591256064/frontend/Born/arcticFox/en_US/design-system/icons/icon-search-20.svg" alt=""><div class="header-mobile__actions__action__label">Search</div>
+				    </a>
+			    </div>
+		    </li>
+			<li class="header-mobile__actions__action" id="search-button-mobile"></li>
+		</ul>
+		<div class="header-mobile__logo">
+			<a href="/"><img alt="BrewDog" src="https://www.brewdog.com/static/version1590609673/frontend/Born/arcticFox/en_US/images/logo.svg"></a>
+		</div>
+		<ul class="header-mobile__actions header-mobile__actions--right">
+			<li class="header-mobile__actions__action">
+				<a class="link desk-hide" href="https://www.brewdog.com/uk/customer/account/login/referer/aHR0cHM6Ly93d3cuYnJld2RvZy5jb20vdWsvP1NJRD0zYzcyMTM0MGFhNjBhMTczZmUyYjNiZDcyM2EyNDk4Yw%2C%2C/"><img alt="icon-user-20 icon" class="icon" src="https://www.brewdog.com/static/version1590609673/frontend/Born/arcticFox/en_US/icons/icon-user-20.svg">
+				<div class="header-mobile__actions__action__label">
+					Login
+				</div></a> <a class="link mob-hide header__actions__action__label" href="https://www.brewdog.com/uk/customer/account/login/referer/aHR0cHM6Ly93d3cuYnJld2RvZy5jb20vdWsvP1NJRD0zYzcyMTM0MGFhNjBhMTczZmUyYjNiZDcyM2EyNDk4Yw%2C%2C/">Login</a>
+			</li>
+			<li class="header-mobile__actions__action js-drawer-open-CartDrawer" data-bind="scope: 'minicart_content'">
+				<a class="link">
+					<img alt="icon-cart-empty-20 icon" class="icon" src="https://www.brewdog.com/static/version1590609673/frontend/Born/arcticFox/en_US/icons/icon-cart-empty-20.svg">
+					<div class="header-mobile__actions__action__counter">{{ cart.item_count }}</div>
+				</a>
+			</li>
+		</ul>
+	</div>
+	<!-- BLOCK mobile.menu -->
+	<div class="header-mobile__menu" id="brewdog_mobile_menu">
+		<div>
+			{% for link in linklists.mega-menu.links %}
+					<div class="header-mobile__menu__item">
+						{% if link.links != blank %}
+								<div>{{ link.title }}</div>
+								<img alt="" class="icon-open" src="https://www.brewdog.com/static/version1590609673/frontend/Born/arcticFox/en_US/icons/icon-minus-16.svg"> <img alt="" class="icon-closed" src="https://www.brewdog.com/static/version1590609673/frontend/Born/arcticFox/en_US/icons/icon-plus-16.svg">
+						{% else %}
+							<a href="{{ link.url }}">{{ link.title }}</a>
+						{% endif %}
+					</div>
+					{% if link.links != blank %}
+						<div class="child-group">
+							{% for child_link in link.links %}
+									<div class="header-mobile__menu__subitem">
+									{% if child_link.links != blank %}
+										<div class="header-mobile__menu__subitem__item">{{ child_link.title }} 
+											<img alt="" class="icon-open" src="https://www.brewdog.com/static/version1590609673/frontend/Born/arcticFox/en_US/icons/icon-minus-16.svg"> 
+											<img alt="" class="icon-closed" src="https://www.brewdog.com/static/version1590609673/frontend/Born/arcticFox/en_US/icons/icon-plus-16.svg">
+										</div>
+										{% for grandchild_link in child_link.links %}
+											<div class="header-mobile__menu__subitem__subitem">
+												<a class="menu__inner-link" href="{{ grandchild_link.url }}">{{ grandchild_link.title }}</a>
+											</div>
+										{% endfor %}
+									{% else %}
+											<a class="header-mobile__menu__subitem__item" href="{{ child_link.url }}">{{ child_link.title }}</a>
+									{% endif %}
+									</div>
+							{% endfor %}
+						</div>
+					{% endif %}
+			{% endfor %}
+		</div>
+	</div>
+	

@@ -1,0 +1,135 @@
+<!-- Begin State Selector Header Banner -->
+<div class="banner-container">
+  <div class="banner-content banner-state-selected">
+    <h2 class="banner-text">
+      You're shopping from: <span id="user-state"></span>
+    </h2>
+    {% include 'state-selector-dropdown' customClass: 'banner-btn-text
+    banner-state-dropdown' customId: 'selected-stated-dropdown' defaultOption: 'Change state' %}
+    <button class="btn banner-button banner-btn-text clear-state-btn">
+      Shop all
+    </button>
+  </div>
+  <div class="banner-content banner-state-unselected">
+    <h2 class="banner-text">You haven't selected your location</h2>
+    {% include 'state-selector-dropdown' customClass: 'banner-btn-text
+    banner-state-dropdown' customId: 'unselected-state-dropdown'%}
+    <button class="btn banner-button banner-btn-text close-banner-btn">
+      Dismiss
+    </button>
+  </div>
+</div>
+
+<style>
+  .banner-container {
+    display: none;
+    width: 100%;
+    height: auto;
+    background-color: #00afdb;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .banner-content {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    margin: 0.7rem 0;
+  }
+
+  .banner-state-selected {
+    display: none;
+  }
+
+  .banner-state-unselected {
+    display: none;
+  }
+
+  .banner-text {
+    margin: 0;
+    color: white;
+    line-height: 35px;
+    font-size: 20px;
+    letter-spacing: 2.7px;
+  }
+
+  .banner-button {
+    background: #00afdb;
+    border: 2px solid white;
+    padding: 0 0.5rem;
+    margin-left: 0.5rem;
+  }
+
+  .banner-state-dropdown {
+    width: auto;
+    height: auto;
+    max-width: 10rem;
+    margin-left: 0.5rem;
+    background: #00afdb;
+    padding: 0 0.5rem;
+    border: 2px solid white;
+    border-radius: 2px;
+  }
+
+  .banner-btn-text {
+    color: white;
+    text-align-last: center;
+    font-size: 20px;
+    letter-spacing: 1.7px;
+    line-height: 1.5;
+    font-family: "league-gothic", sans-serif;
+    text-transform: uppercase;
+    font-weight: normal;
+  }
+</style>
+
+<script>
+  function updateHeaderBannerState() {
+    var isValidState = getIsValidUserState(); // state-selector-scripts.liquid
+    if (isValidState) {
+      updateUserStateText();
+      $(".banner-state-unselected").hide();
+      $(".banner-container").css("display", "flex");
+      $(".banner-state-selected").css("display", "flex");
+    } else {
+      $(".banner-state-selected").hide();
+      $(".banner-container").css("display", "flex");
+      $(".banner-state-unselected").css("display", "flex");
+    }
+  }
+
+  function updateUserStateText() {
+    var isValidState = getIsValidUserState(); // state-selector-scripts.liquid
+    if (isValidState) {
+      var stateKey = getUserState(); // state-selector-scripts.liquid
+      var stateValue = USA_STATES.hasOwnProperty(stateKey)
+        ? USA_STATES[stateKey]
+        : "";
+      $("#user-state").html(stateValue);
+    }
+  }
+
+  $(document).ready(function() {
+    updateHeaderBannerState();
+
+    $(document).on("click", ".close-banner-btn", function() {
+      $(".banner-container").hide();
+    });
+
+    $(document).on("click", ".clear-state-btn", function() {
+      storeUserState(""); // state-selector-scripts.liquid
+    });
+
+    $(document).on("change", "#unselected-state-dropdown", function() {
+      const state = $("#unselected-state-dropdown").val() || "";
+      storeUserState(state); // state-selector-scripts.liquid
+    });
+    
+    $(document).on("change", "#selected-stated-dropdown", function() {
+      const state = $("#selected-stated-dropdown").val() || "";
+      storeUserState(state); // state-selector-scripts.liquid
+    });
+  });
+</script>
+<!-- End State Selector Header Banner -->

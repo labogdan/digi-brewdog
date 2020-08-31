@@ -1,0 +1,39 @@
+{% comment %}
+  The contents of the product.liquid template can be found in /sections/product-template.liquid
+{% endcomment %}
+
+
+
+		{% assign productVisible = true %}
+        {% if product.tags contains 'Shareholder' %}
+            {% unless customer.tags contains 'shareholder' %}
+      			{% assign productVisible = false %}
+				<div class="content-wrapper">
+                    <h1 class='text-center'>NOT AVAILABLE</h1>
+                    <div class="text-wrapper--small">
+                        <hr>
+                        <p class='text-center'>This product is only available to Brewdog Shareholders<br><br>
+                        <a class="btn btn--small">Continue Shopping</a>
+                      	</p>
+                      
+                    </div>
+                </div>
+      		{% endunless %}
+        {% endif %}
+
+        {% if productVisible %}
+          {% assign hover_class = section.settings.collection_style %}
+          {% assign fit_image_class = 'my-single-block grid__item--variable-height grid__image' %}
+          {% section 'product-template' %}
+      	{% endif %}
+
+<!-- brontoBrowseObject:start -->
+<script>
+  (function(window) {
+    var BROWSE_PRODUCT = "brontoBrowseObject";
+    window[BROWSE_PRODUCT] = {
+      product: {{ product | json }}
+    };
+  })(window);
+</script>
+<!-- brontoBrowseObject:end -->

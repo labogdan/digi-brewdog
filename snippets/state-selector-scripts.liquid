@@ -1,0 +1,245 @@
+<!-- Begin State Selector Scripts -->
+<script>
+  var USA_STATES = {
+    OU: "Outside the US",
+    AL: "Alabama",
+    AK: "Alaska",
+    AZ: "Arizona",
+    AR: "Arkansas",
+    CA: "California",
+    CO: "Colorado",
+    CT: "Connecticut",
+    DE: "Delaware",
+    DC: "District Of Columbia",
+    FL: "Florida",
+    GA: "Georgia",
+    HI: "Hawaii",
+    ID: "Idaho",
+    IL: "Illinois",
+    IN: "Indiana",
+    IA: "Iowa",
+    KS: "Kansas",
+    KY: "Kentucky",
+    LA: "Louisiana",
+    ME: "Maine",
+    MD: "Maryland",
+    MA: "Massachusetts",
+    MI: "Michigan",
+    MN: "Minnesota",
+    MS: "Mississippi",
+    MO: "Missouri",
+    MT: "Montana",
+    NE: "Nebraska",
+    NV: "Nevada",
+    NH: "New Hampshire",
+    NJ: "New Jersey",
+    NM: "New Mexico",
+    NY: "New York",
+    NC: "North Carolina",
+    ND: "North Dakota",
+    OH: "Ohio",
+    OK: "Oklahoma",
+    OR: "Oregon",
+    PA: "Pennsylvania",
+    RI: "Rhode Island",
+    SC: "South Carolina",
+    SD: "South Dakota",
+    TN: "Tennessee",
+    TX: "Texas",
+    UT: "Utah",
+    VT: "Vermont",
+    VA: "Virginia",
+    WA: "Washington",
+    WV: "West Virginia",
+    WI: "Wisconsin",
+    WY: "Wyoming"
+  };
+
+  // Beer types or Merch Types allowed on all states.
+  // To add/remove a beer type: Please use the SAME tag name you are using in Shopify to manage collections (it's case sensitive).
+  var countryAllowedBeerTypes = ["AF", "Clothing", "Glassware", "Accessories", "Barware", "Chain Gang", "Gifting", "EFP", "Headwear", "T-Shirts","Sweats", "For Dogs", "Homebrew", "Art Prints"];
+
+  // States with full beer restriction
+  // To add/remove a state: Please use the same state's abbreviation we're using above.
+  var fullRestrictedStates = ["OU"]
+
+  // States available per beer type.
+  // To add/remove a state: Please use the same state's abbreviation we're using above.
+  // To add/remove a beer type: Please use the SAME tag's names you' are using in Shopify (it's case sensitive).
+  var allowedStatesPerBeerType = {
+    Nitro: ["CT", "DC", "NE", "ND", "NH", "NV", "OH", "OR", "VT", "PA"],
+	AF: ["AL", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FL", "IL", "IN", "IA", "KY", "LA", "ME", "MD", "MA", "MN", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"],
+	Headliners: [
+      "CT",
+      "DC",
+      "NE",
+      "ND",
+      "NH",
+      "NV",
+      "OH",
+      "OR",
+      "VT",
+      "PA"
+    ],
+    Seasonal: [
+      "CT",
+      "DC",
+      "NE",
+      "ND",
+      "NH",
+      "NV",
+      "OH",
+      "OR",
+      "VT",
+      "PA"
+    ],
+    Overworks: [
+      "CT",
+      "DC",
+      "NE",
+      "ND",
+      "NH",
+      "NV",
+      "OH",
+      "OR",
+      "VT",
+      "PA"
+    ],
+    'Hawkes Cider': ["OH", "PA", "MO", "GA", "CT", "MI", "WI", "CO"],
+    'Jenis x BrewDog': ["OH"],
+    'Ohio Only': ["OH"],
+    'Homage x Brewdog': [
+      "CT",
+      "DC",
+      "HI",
+      "NE",
+      "ND",
+      "NH",
+      "NV",
+      "OH",
+      "OR",
+      "VT",
+      "PA"
+    ]
+  };
+
+  var STATE_KEY = "USER_STATE";
+  var STATE_MODAL_WAS_SHOWN = "STATE_MODAL_WAS_SHOWN";
+
+  function setOnLocalStorage(key, value) {
+    localStorage.setItem(key, value);
+  }
+
+  function getFromLocalStorage(key) {
+    return localStorage.getItem(key);
+  }
+
+  function storeUserState(state) {
+    setOnLocalStorage(STATE_KEY, state);
+    location.reload();
+  }
+
+  function getUserState() {
+    return getFromLocalStorage(STATE_KEY) || "";
+  }
+
+  function setStateModalWasShown() {
+    setOnLocalStorage(STATE_MODAL_WAS_SHOWN, "true");
+  }
+
+  function isBeerFullRestricted(){
+    var response = false
+    var userState = getUserState();
+    if(userState){
+      response = fullRestrictedStates.includes(userState);
+    }
+    console.log('isBeerFullRestricted',response)
+    return response
+  }
+
+  function getStateModalWasShown() {
+    var value = getFromLocalStorage(STATE_MODAL_WAS_SHOWN);
+    var wasShown = value && value === "true";
+    return wasShown;
+  }
+
+  function getIsValidUserState() {
+    var oldState = getUserState();
+    var isValid = oldState && oldState !== "" && oldState !== "undefined";
+    return isValid;
+  }
+
+  function debounce(func, wait, immediate) {
+    var timeout;
+    return function() {
+      var context = this,
+        args = arguments;
+      var later = function() {
+        timeout = null;
+        if (!immediate) func.apply(context, args);
+      };
+      var callNow = immediate && !timeout;
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+      if (callNow) func.apply(context, args);
+    };
+  }
+
+  function getAllowedTagsByUserState() {
+    var result = [];
+    var userState = getUserState();
+    if (userState) {
+      var beerTypes = Object.keys(allowedStatesPerBeerType);
+      var allowedBeerTypes = beerTypes.filter((key) => {
+          return allowedStatesPerBeerType[key].includes(userState);
+        })
+        .concat(countryAllowedBeerTypes);
+      result = allowedBeerTypes || [];
+    }
+    return result;
+  }
+
+  function isProductAvailableInState(state, tags){
+    var isProductAllowed = tags.reduce((acc, tag) =>{
+        var cleanTag = tag.toLowerCase().trim();
+        var allowedStates = getAllowedStateLowerCase();
+        var isBeerTypeRestricted = allowedStates.hasOwnProperty(cleanTag)
+
+        var isBeerTypeAllowed = true
+        if(isBeerTypeRestricted){
+          isBeerTypeAllowed = allowedStates[cleanTag].includes(state)
+        }else{
+          isBeerTypeAllowed = countryAllowedBeerTypes.includes(tag)
+        }
+
+        var isAllowed = acc || isBeerTypeAllowed
+        return isAllowed
+
+    }, false)
+
+    return isProductAllowed
+  }
+
+  function getAllowedStateLowerCase() {
+    return Object.keys(allowedStatesPerBeerType).reduce(
+      (c, k) => ((c[k.toLowerCase()] = allowedStatesPerBeerType[k]), c),
+      {}
+    );
+  }
+
+  function convertArrayToLowerCase(array){
+    return array.map((value = '') => value.toLowerCase().trim())
+  }
+
+  function isBeerPage(){
+    var beerTypes = Object.keys(allowedStatesPerBeerType) || []
+    var collectionTags = {{ collection.all_tags | json}} || []
+
+    var beerTypesLC = convertArrayToLowerCase(beerTypes)
+    var collectionTagsLC = convertArrayToLowerCase(collectionTags)
+
+    var beerTags = collectionTags.filter((tag) => beerTypes.includes(tag))
+    return (beerTags.length > 0)
+  }
+</script>
+<!-- End State Selector Scripts -->

@@ -1,0 +1,36 @@
+{% if product.metafields.global.abv or product.metafields.global.style or  product.metafields.global.ibu or product.metafields.global.ingredients or disclaimer %}
+
+<section class="brewsheet">
+	<h2>Brew Sheet</h2>
+	<div class="contain">
+		{% if product.metafields.global.abv %}
+			<div class="grid__item large--one-third medium--one-third">
+				<h3>ABV</h3>
+				<p>{{ product.metafields.global.abv }}</p>
+			</div>
+		{% endif %}
+		{% if product.metafields.global.style %}
+			<div class="grid__item large--one-third medium--one-third">
+				<h3>STYLE</h3>
+				<p>{{ product.metafields.global.style }}</p>
+			</div>
+		{% endif %}
+		{% if product.metafields.global.ibu %}
+			<div class="grid__item large--one-third medium--one-third">
+				<h3>IBU</h3>
+				<p>{{ product.metafields.global.ibu }}</p>
+			</div>
+		{% endif %}
+		{% if product.metafields.global.ingredients %}
+			<div class="grid__item">
+				<h3>INGREDIENTS</h3>
+				<p>{{ product.metafields.global.ingredients }}</p>
+			</div>
+		{% endif %}
+		{% if product.metafields.global.disclaimer %}
+			<p>{{ product.metafields.global.disclaimer }}</p>
+		{% endif %}
+	</div>
+</section>
+
+{% endif %}

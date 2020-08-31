@@ -1,0 +1,25 @@
+<div id="CartDrawer" class="drawer fixed-overlay">
+  <div class="fixed-overlay--content">
+    <div class="drawer__header medium-down--hide">
+      <div class="drawer__close">
+        <button type="button" class="icon-fallback-text js-drawer-close">
+          <svg><use xlink:href="#icon-close"></use></svg>
+          <span class="fallback-text">{{ 'cart.general.close_cart' | t | json }}</span>
+        </button>
+      </div>
+    </div>
+    <!--<h6 style="text-align: center; color: #fff">EQUITY PUNKS – DISCOUNT APPLIED AT CHECKOUT!</h6>-->
+    
+    {% if customer.tags contains 'shareholder' %}
+      <div class="shareholder-sticky relative">
+        {% if customer.tags contains 'shareholder10' %}
+          <p>Use coupon code SHAREHOLDER10 at checkout for your 10% Discount</p>
+        {% else %}
+          <p>Use coupon code SHAREHOLDER at checkout for your 20% Discount</p>
+        {% endif %}
+      </div>
+    {% endif %}
+    
+    <div id="CartContainer" style="padding: 20px 40px 40px 40px"></div>
+  </div>
+</div>

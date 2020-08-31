@@ -1,0 +1,113 @@
+{% assign isDefault = false %}
+{% assign heading = false %}
+{% assign text = false %}
+{% assign url = false %}
+{% assign buttonText = false %}
+
+{% if section.settings.title != blank %}
+  {% assign heading = section.settings.title | escape %}
+  {% if heading == "Welcome to our store!" %}
+    {% assign isDefault = true %}
+  {% endif %}
+{% endif %}
+
+{% if section.settings.text != blank %}
+  {% assign text = section.settings.text %}
+{% endif %}
+
+{% if section.settings.link != blank %}
+  {% assign url = section.settings.link %}
+{% elsif isDefault %}
+  {% assign url = "/collections/all" %}
+{% endif %}
+
+{% if section.settings.linkText != blank %}
+  {% assign buttonText = section.settings.linkText | escape %}
+{% endif %}
+<div class="grid--full index-featured-text custom-banner">
+  <div class="index-grid banner-index">
+      <div class="image-wrapper" style="height: 100%">
+      	<img src="{{ section.settings.background-image | img_url: '1600x' }}">
+      </div>
+  	  <div class="banner-content">
+		  {% if heading %}
+		    <h2 style="line-height: .8">{{ section.settings.title | escape }}</h2>
+		  {% endif %}
+		
+		  {% if text %}
+		    <div style="margin-bottom: 10px">{{ section.settings.text }}</div>
+		  {% endif %}
+		
+		  {% if buttonText and url %}
+		    <a class="btn" href="{{ url }}">{{ section.settings.linkText | escape }}</a>
+		  {% endif %}
+	  </div>
+  </div>
+</div>
+
+<style>
+  .index-featured-text.custom-banner{
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+  .index-featured-text.custom-banner .banner-index {
+  	height:{{ section.settings.banner_height}}px;
+  }
+  @media only screen and (max-width: 700px) {
+  		.index-featured-text.custom-banner .banner-index {
+          max-height: 220px;
+        }
+  }
+</style>
+
+{% schema %}
+  {
+    "name": "Homepage Banner",
+    "class": "homepage-banner",
+    "settings": [
+      {
+		"type": "image_picker",
+		"id": "background-image",
+		"label": "Background image"
+	  },
+      {
+        "id": "title",
+        "type": "text",
+        "label": "Heading"
+      },
+      {
+        "id": "text",
+        "type": "richtext",
+        "label": "Text"
+      },
+      {
+        "id": "link",
+        "type": "url",
+        "label": "Link"
+      },
+      {
+        "id": "linkText",
+        "type": "text",
+        "label": "Button text"
+      },
+	  {
+          "type": "range",
+          "id": "banner_height",
+          "min": 400,
+          "max": 800,
+          "step": 20,
+          "unit": "px",
+          "label": "Height",
+          "default": 400
+      }
+    ],
+    "presets": [
+      {
+        "name": "Homepage Banner",
+        "category": "Human Code",
+        "settings": {
+        }
+      }
+    ]
+  }
+{% endschema %}

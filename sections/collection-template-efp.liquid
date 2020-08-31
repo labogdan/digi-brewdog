@@ -1,0 +1,347 @@
+{% comment %}
+
+  For more information on collection tags:
+    - http://docs.shopify.com/themes/liquid-variables/collection
+
+Two layout options: 3x3 or 2x3
+
+{% endcomment %}
+
+
+
+  
+{% if customer.tags contains 'tier_1' or customer.tags contains 'tier_2' or customer.tags contains 'tier_3' %}
+
+
+      {% assign gridLayoutStyle = section.settings.collection_layout_style %}
+      {% if gridLayoutStyle == "twoByThree"  %}
+        {% assign productsOnPage = 6 %}
+        {% assign grid_item_width = 'large--one-half medium--one-half' %}
+      {% else %}
+        {% assign productsOnPage = 9 %}
+        {% assign grid_item_width = 'large--one-third medium--one-third' %}
+      {% endif %}
+
+      {% paginate collection.products by productsOnPage %}
+
+      {% if section.settings.show_collection_titles %}
+        <header class="section-header
+          {% if collection.image %}section-header--image{% else %} section-header--no-image-loaded{% endif %}"
+          {% if collection.image %}
+          style="background-image: url( {{ collection.image | img_url: 'master' }})"
+          {% endif %}>
+          <div class="text-wrapper--center-cell text-max-width">
+            <div class="text-wrapper--small text-center">
+              <h1 id="bc-sf-filter-collection-header" class="section-header__title text-center">{{ collection.title }}</h1>
+              {% if collection.description != blank %}
+                {% comment %}Shopify sometime will wrap the output in a <p> tag and sometimes won't, depending on what the user inputs.  We /always/ want one wrapped for margins, but this can sometimes lead to duplicates.{% endcomment %}
+                <p id="bc-sf-filter-collection-description">{{collection.description}}</p>
+              {% endif %}
+            </div>
+          </div>
+        </header>
+      {% endif %}
+
+      {% if section.settings.enable_collection_sorting %}
+        {% assign hasFiltersWrapper = true %}
+      {% endif %}
+
+      {% if section.settings.enable_collection_filtering and collection.all_tags.size > 0 %}
+        {% assign hasFiltersWrapper = true %}
+      {% endif %}
+
+      {% if hasFiltersWrapper %}
+      <div class="collection-filters-wrapper {% if section.settings.show_collection_titles %}has-border{% endif %}">
+      {% else %}
+      <div class="breadcrumb-wrapper content-wrapper--squished content-wrapper--half-top medium-down--text-center medium-down--hide">
+      {% endif %}
+        {% include 'breadcrumb' %}
+
+        {% if hasFiltersWrapper %}
+          <div class="collection-filters">
+            {% if section.settings.enable_collection_sorting %}
+              <div id="bc-sf-filter-top-sorting" class="collection-sort {% if collection.products.first.vendor == collection.title %}vendor-page{% endif %}"></div>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+
+      {% assign collectionSize = collection.products | size %}
+      {% if collectionSize == 0 %}
+        <div class="content-wrapper collection-empty">
+          <h1 class='text-center'>{{'collections.general.no_matches' | t}}</h1>
+        </div>
+      {% endif %}  
+
+      <div id="bc-sf-filter-wrapper">  
+        <div id="bc-sf-filter-tree-mobile"></div>
+        <div id="bc-sf-filter-tree"></div>
+
+        <div id="bc-sf-filter-right">
+          <div id="bc-sf-filter-products" class="grid--products grid--full collection-container">
+            {% for product in collection.products %}
+
+              {% comment %}
+                Filter based on customer  
+              {% endcomment %}
+
+              {% assign productVisible = true %}
+              {% if product.tags contains 'Shareholder' %}
+                  {% unless customer.tags contains 'shareholder' %}
+                  {% assign productVisible = false %}
+                  {% endunless %}
+              {% endif %}
+
+              {% if product.tags contains 'Tier_1' %}
+                  {% unless customer.tags contains 'tier_1' or customer.tags contains 'tier_2' or customer.tags contains 'tier_3' %}
+                  {% assign productVisible = false %}
+                  {% endunless %}
+              {% endif %}
+
+              {% if product.tags contains 'Tier_2' %}
+                  {% unless customer.tags contains 'tier_2' or customer.tags contains 'tier_3' %}
+                  {% assign productVisible = false %}
+                  {% endunless %}
+              {% endif %}
+
+              {% if product.tags contains 'Tier_3' %}
+                  {% unless customer.tags contains 'tier_3' %}
+                  {% assign productVisible = false %}
+                  {% endunless %}
+              {% endif %}
+
+
+              {% if productVisible %}
+                {% assign hover_class = section.settings.collection_style %}
+                {% assign fit_image_class = 'my-single-block grid__item--variable-height grid__image' %}
+                {% include 'product-grid-item' %}
+              {% endif %}
+
+            {% endfor %}
+          </div>
+
+          {% if section.settings.collection_style == "grid__image--caption" %}
+            <hr class="collection-pagination-rule">
+          {% endif %}
+          <div id="bc-sf-filter-bottom-pagination" class="pagination"></div>
+          <div id="bc-sf-filter-load-more"></div>
+        </div>
+      </div>
+
+      {% endpaginate %}
+
+        
+{% else %}        
+    <div class="efp-only">
+      <h3>Don’t see anything?</h3>
+      <p>Create an account using your Equity Punk email address and log in <a href="/account">here!</a><br>
+      Still having trouble? Email <a href="mailto:equitypunksusa@brewdog.com">equitypunksusa@brewdog.com</a></p>
+    </div>
+{% endif %}
+        
+        
+<script>
+  // Declare bcSfFilterConfig variable
+  var bcSfFilterConfig = {
+    label: {
+      refine: "{{ 'product_filter_search.refine' | t }}",
+      refine_mobile: "{{ 'product_filter_search.refine_mobile' | t }}",
+      clear: "{{ 'product_filter_search.clear' | t }}",
+      clear_all: "{{ 'product_filter_search.clear_all' | t }}",
+      apply: "{{ 'product_filter_search.apply' | t }}",
+      breadcrumb_home: "{{ 'general.breadcrumbs.home' | t }}",
+      load_more: {% assign temp = 'product_filter_search.load_more' | t %} {% unless temp contains 'translation missing'  %} "{{ temp }}" {% else %} "Load more Products" {% endunless %},
+      show_limit: {% assign temp = 'product_filter_search.show_limit' | t %} {% unless temp contains 'translation missing'  %} "{{ temp }}" {% else %} "Show" {% endunless %},
+      sorting: "{{ 'collections.sort.title' | t }}",
+      sorting_best_selling: {% assign temp = 'collections.sorting.best_selling' | t %} {% unless temp contains 'translation missing'  %} "{{ temp }}" {% else %} "Best Selling" {% endunless %},
+      sorting_featured: {% assign temp = 'collections.sorting.featured' | t %} {% unless temp contains 'translation missing'  %} "{{ temp }}" {% else %} "Featured" {% endunless %},
+      sorting_title_ascending: {% assign temp = 'collections.sorting.az' | t %} {% unless temp contains 'translation missing'  %} "{{ temp }}" {% else %} "Alphabetically, A-Z" {% endunless %},
+      sorting_title_descending: {% assign temp = 'collections.sorting.za' | t %} {% unless temp contains 'translation missing'  %} "{{ temp }}" {% else %} "Alphabetically, Z-A" {% endunless %},
+      sorting_price_ascending: {% assign temp = 'collections.sorting.price_ascending' | t %} {% unless temp contains 'translation missing'  %} "{{ temp }}" {% else %} "Lowest Price" {% endunless %},
+      sorting_price_descending: {% assign temp = 'collections.sorting.price_descending' | t %} {% unless temp contains 'translation missing'  %} "{{ temp }}" {% else %} "Highest Price" {% endunless %},
+      sorting_date_ascending: {% assign temp = 'collections.sorting.date_ascending' | t %} {% unless temp contains 'translation missing'  %} "{{ temp }}" {% else %} "Date, Old to New" {% endunless %},
+      sorting_date_descending: {% assign temp = 'collections.sorting.date_descending' | t %} {% unless temp contains 'translation missing'  %} "{{ temp }}" {% else %} "Date, New to Old" {% endunless %},
+      sorting_sale_descending: {% assign temp = 'collections.sorting.sale_descending' | t %} {% unless temp contains 'translation missing'  %} "{{ temp }}" {% else %} "% Off" {% endunless %},
+      sorting_relevance: {% assign temp = 'collections.sorting.relevance' | t %} {% unless temp contains 'translation missing'  %} "{{ temp }}" {% else %} "Relevance" {% endunless %},
+    
+      sale: "{{ 'products.product.on_sale' | t }}",
+      sold_out: "{{ 'products.product.sold_out' | t }}",
+      sale_from_price: "{{ 'products.product.on_sale_from_html' | t }}",
+      from_price: "{{ 'products.general.from_text_html' | t }}",
+      breadcrumb_home_link: "{{ 'general.breadcrumbs.home_link_title' | t }}",
+    },
+    custom: {
+      products_per_page: {{ productsOnPage }},
+      grid_item_width: "{{ grid_item_width }}",
+      fit_image_class: "{{ fit_image_class }}",
+      hover_class: "{{ hover_class }}",
+      collection_layout_style: "{{ section.settings.collection_layout_style }}",
+      collection_style: "{{ section.settings.collection_style }}"
+    }
+  };
+</script>
+
+{% schema %}
+
+  {
+    "name": "Collection pages",
+    "class": "collection-pages",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_collection_filtering",
+        "label": "Enable tag filtering"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_collection_sorting",
+        "label": "Enable sorting",
+        "info": "A-Z, Z-A, etc."
+      },
+      {
+        "type": "select",
+        "id": "collection_style",
+        "label": "Product title \/ price style",
+        "options": [
+          {
+            "value": "grid__image--hover",
+            "label": "Display on hover"
+          },
+          {
+            "value": "grid__image--caption",
+            "label": "Always display"
+          }
+        ],
+        "default": "grid__image--caption"
+      },
+      {
+        "type": "select",
+        "id": "collection_layout_style",
+        "label": "Products per row",
+        "options": [
+          {
+            "value": "twoByThree",
+            "label": "Two"
+          },
+          {
+            "value": "threeByThree",
+            "label": "Three"
+          },
+          {
+            "value": "fourByThree",
+            "label": "Four"
+          },
+          {
+            "value": "fiveByThree",
+            "label": "Five"
+          }
+        ],
+        "default": "threeByThree"
+      },
+      {
+        "type": "header",
+        "content": "Header"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_collection_header",
+        "label": "Enable collection header"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_collection_description",
+        "label": "Show description"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_dropshadow",
+        "default": false,
+        "label": "Show dropshadow"
+      },
+      {
+        "type": "select",
+        "id": "image_alignment",
+        "default": "center",
+        "label": "Image alignment",
+        "options": [
+          {
+            "value": "top",
+            "label": "Top"
+          },
+          {
+            "value": "center",
+            "label": "Middle"
+          },
+          {
+            "value": "bottom",
+            "label": "Bottom"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "color_overlay_opacity",
+        "default": "0.8",
+        "label": "Overlay opacity",
+        "options": [
+          {
+            "value": "0",
+            "label": "Off"
+          },
+          {
+            "value": "0.1",
+            "label": "10%"
+          },
+          {
+            "value": "0.2",
+            "label": "20%"
+          },
+          {
+            "value": "0.3",
+            "label": "30%"
+          },
+          {
+            "value": "0.4",
+            "label": "40%"
+          },
+          {
+            "value": "0.5",
+            "label": "50%"
+          },
+          {
+            "value": "0.6",
+            "label": "60%"
+          },
+          {
+            "value": "0.7",
+            "label": "70%"
+          },
+          {
+            "value": "0.8",
+            "label": "80%"
+          },
+          {
+            "value": "0.9",
+            "label": "90%"
+          },
+          {
+            "value": "1",
+            "label": "100%"
+          }
+        ]
+      },
+      {
+        "type": "color",
+        "id": "color_overlay_color",
+        "default": "#031207",
+        "label": "Overlay color"
+      },
+      {
+        "type": "color",
+        "id": "color_text",
+        "default": "#FFFFFF",
+        "label": "Text color"
+      }
+    ]
+  }
+{% endschema %}

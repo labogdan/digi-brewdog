@@ -1,0 +1,47 @@
+{% include 'mobile-drawer' %}
+	
+
+<div class="header">
+    <a class="header__logo" href="/">
+        <img src="https://www.brewdog.com/static/version1590609673/frontend/Born/arcticFox/en_US/images/logo.svg" alt="BrewDog">
+    </a>
+
+    {% include 'header-main-loop' %}
+    
+        <ul class="header__actions">
+        
+        <li class="header__actions__action odd" id="search-button">
+        <a href="/search" class="link">
+	        <div class="header__actions__action">
+	        	<span class="header__actions__action__label">Search</span>
+	        	<img class="icon " src="https://www.brewdog.com/static/version1591256064/frontend/Born/arcticFox/en_US/design-system/icons/icon-search-20.svg" alt="icon-user-20 icon">
+        	</div>
+    	</a>
+        </li>
+                
+        <li class="header__actions__action even">
+            <a href="/account" class="link desk-hide">
+    <img class="icon" src="https://www.brewdog.com/static/version1590609673/frontend/Born/arcticFox/en_US/icons/icon-user-20.svg" alt="icon-user-20 icon">
+    <div class="header-mobile__actions__action__label">Login</div>
+</a>
+
+<a href="/account" class="link mob-hide header__actions__action__label">
+    Login</a>
+
+            <img class="icon" src="https://www.brewdog.com/static/version1590609673/frontend/Born/arcticFox/en_US/images/icon-user-20.svg" alt="icon-user-20 icon">
+        </li>
+        <li class="header__actions__action odd">
+            
+
+<div id="showcart" data-block="minicart" class="minicart-wrapper" tabindex="0">
+    <div class="showcart js-drawer-open-CartDrawer" data-bind="scope: 'minicart_content'">
+        <span class="header__actions__action__label"><span class="price">${{ cart.total_price | money_without_currency}}</span></span>
+        <img class="icon" src="https://www.brewdog.com/static/version1590609673/frontend/Born/arcticFox/en_US/images/icon-cart-empty-20.svg" alt="icon-cart-empty-20 icon">
+        <div class="header__actions__action__counter">{{ cart.item_count }}</div>
+    </div>
+
+    
+</div>
+        </li>
+    </ul>
+</div>

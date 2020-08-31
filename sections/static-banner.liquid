@@ -1,0 +1,35 @@
+<div class="index-grid grid--products grid--full grid--featured-products">
+  <a class="grid--full" href="{{ section.settings.banner_url }}">
+    <div class="index-grid static-frame">
+        <div class="image-wrapper">
+          <img src="{{ section.settings.background-image | img_url: '1600x' }}">
+        </div>
+    </div>
+  </a>
+</div>
+{% schema %}
+  {
+    "name": "Static Banner",
+    "class": "static-banner",
+    "settings": [
+      {
+		"type": "image_picker",
+		"id": "background-image",
+		"label": "Background image"
+	  },
+	  {
+		"type": "url",
+		"id": "banner_url",
+		"label": "Banner URL"
+	  }
+    ],
+    "presets": [
+      {
+        "name": "Static Banner",
+        "category": "Human Code",
+        "settings": {
+        }
+      }
+    ]
+  }
+{% endschema %}
